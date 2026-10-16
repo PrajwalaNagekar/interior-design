@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { ArrowLeft, Check, Undo2, History, MessageCircle } from "lucide-react";
+import { ArrowLeft, Check, Undo2, History, MessageCircle, Wand2, Loader2, Copy } from "lucide-react";
+import { askAI } from "@/lib/ai.functions";
 import { toast } from "sonner";
 import { getDB, setDB, useDB, pushStatus, type Quotation, type ChangeEntry } from "@/lib/store";
 import { useMe } from "@/lib/session";
@@ -24,6 +25,8 @@ function Review() {
   const [comment, setComment] = useState("");
   const [wa, setWa] = useState(false);
   const [confirmA, setConfirmA] = useState(false);
+  const [aiBusy, setAiBusy] = useState<string | null>(null);
+  const [aiOut, setAiOut] = useState<{ mode: "advisor" | "whatsapp"; text: string } | null>(null);
 
   const changes = useMemo<ChangeEntry[]>(() => {
     if (!q || !orig) return [];
@@ -81,6 +84,22 @@ function Review() {
   const shared = ["sent", "cust_approved", "cust_rejected", "cust_discuss"].includes(orig.status);
   const link = customerUrl(q.token);
   const waMsg = `Hello ${q.customer.name}, your interior design quotation ${q.number} (total ${inr(t.grand)}) is ready. View, approve or discuss here: ${link}`;
+
+  const runAI = async (mode: "advisor" | "whatsapp") => {
+    setAiBusy(mode);
+    const lines = q.areas.flatMap((a, ai) => a.items.map((qi) => {
+      const it = db.items.find((x) => x.id === qi.itemId);
+      const m = (id: string) => db.materials.find((x) => x.id === id)?.name ?? "-";
+      return `${a.name}: ${it?.name} | ${qi.length}x${qi.width}x${qi.height}${qi.unit} qty ${qi.qty} | ${m(qi.materialId)}, ${m(qi.finishId)}, ${m(qi.colourId)} | material ₹${qi.materialRate}, labour ₹${qi.labourRate}, hardware ₹${qi.hardwareCost} | vendor ${db.vendors.find((v) => v.id === qi.vendorId)?.name ?? "-"}`;
+    }).concat(`${a.name} total ${inr(t.areaTotals[ai])}`));
+    const summary = `Customer: ${q.customer.name}, ${q.customer.projectType}, ${q.customer.address}\nMargin ${q.marginPct}% Discount ${q.discountPct}%\nSubtotal ${inr(t.subtotal)} GST ${inr(t.gst)} Grand ${inr(t.grand)}\nSales notes: ${q.notes || "-"}\n${lines.join("\n")}`;
+    try {
+      const r = await askAI({ data: { mode, summary } });
+      if (!r.ok) toast.error(r.error);
+      else setAiOut({ mode, text: mode === "whatsapp" ? r.text.replace("{LINK}", link) : r.text });
+    } catch { toast.error("AI request failed. Try again."); }
+    setAiBusy(null);
+  };
 
   const num = "input-lux py-1.5 px-2 text-right w-24";
   const changed = (a: unknown, b: unknown) => (a !== b ? "border-gold bg-gold-soft" : "");
@@ -179,6 +198,15 @@ function Review() {
           </div>
 
           <div className="card-lux p-6">
+            <p className="mb-1 flex items-center gap-2 font-semibold"><Wand2 className="size-4 text-gold" /> AI Pricing Advisor</p>
+            <p className="mb-4 text-xs text-muted-foreground">Checks rates, margin and risks, and drafts the customer WhatsApp message.</p>
+            <div className="grid grid-cols-2 gap-2">
+              <button disabled={!!aiBusy} onClick={() => runAI("advisor")} className="btn btn-primary text-xs">{aiBusy === "advisor" ? <Loader2 className="size-4 animate-spin" /> : "Analyse quote"}</button>
+              <button disabled={!!aiBusy} onClick={() => runAI("whatsapp")} className="btn btn-outline text-xs">{aiBusy === "whatsapp" ? <Loader2 className="size-4 animate-spin" /> : "Draft message"}</button>
+            </div>
+          </div>
+
+          <div className="card-lux p-6">
             <p className="mb-3 flex items-center gap-2 font-semibold"><History className="size-4 text-gold" /> Change log</p>
             {[...orig.changeLog, ...(reviewable ? changes : [])].length === 0 && <p className="text-xs text-muted-foreground">No changes yet.</p>}
             <ul className="space-y-2 text-xs">
@@ -205,6 +233,13 @@ function Review() {
       <Sheet open={back} onClose={() => setBack(false)} title="Send back to Sales" side="center">
         <textarea className="input-lux" rows={4} placeholder="What should Sales revise?" value={comment} onChange={(e) => setComment(e.target.value)} />
         <button onClick={sendBack} className="btn btn-dark mt-4 w-full">Send back</button>
+      </Sheet>
+      <Sheet open={!!aiOut} onClose={() => setAiOut(null)} title={aiOut?.mode === "whatsapp" ? "AI WhatsApp draft" : "AI Pricing Advisor"} side="center">
+        <div className="max-h-[60vh] overflow-y-auto whitespace-pre-wrap rounded-xl bg-muted/60 p-4 text-sm leading-relaxed">{aiOut?.text}</div>
+        <div className="mt-4 flex gap-2">
+          <button onClick={() => { navigator.clipboard.writeText(aiOut?.text ?? ""); toast.success("Copied"); }} className="btn btn-outline flex-1"><Copy className="size-4" /> Copy</button>
+          {aiOut?.mode === "whatsapp" && <a href={`https://wa.me/${q.customer.phone.replace(/\D/g, "")}?text=${encodeURIComponent(aiOut.text)}`} target="_blank" rel="noreferrer" className="btn flex-1 bg-whatsapp text-primary-foreground"><MessageCircle className="size-4" /> Open WhatsApp</a>}
+        </div>
       </Sheet>
       <Sheet open={confirmA} onClose={() => setConfirmA(false)} title={dirty ? "Approve with changes?" : "Approve quotation?"} side="center">
         <p className="text-sm text-muted-foreground">Grand total <b className="text-foreground">{inr(totals(q, db).grand)}</b>. After approval you can send it to {q.customer.name} on WhatsApp.</p>
