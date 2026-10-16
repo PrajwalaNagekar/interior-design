@@ -234,8 +234,8 @@ function Review() {
         <textarea className="input-lux" rows={4} placeholder="What should Sales revise?" value={comment} onChange={(e) => setComment(e.target.value)} />
         <button onClick={sendBack} className="btn btn-dark mt-4 w-full">Send back</button>
       </Sheet>
-      <Sheet open={!!aiOut} onClose={() => setAiOut(null)} title={aiOut?.mode === "whatsapp" ? "AI WhatsApp draft" : "AI Pricing Advisor"} side="center">
-        <div className="max-h-[60vh] overflow-y-auto whitespace-pre-wrap rounded-xl bg-muted/60 p-4 text-sm leading-relaxed">{aiOut?.text}</div>
+      <Sheet wide open={!!aiOut} onClose={() => setAiOut(null)} title={aiOut?.mode === "whatsapp" ? "AI WhatsApp draft" : "AI Pricing Advisor"} side="center">
+        <div className="whitespace-pre-wrap rounded-xl bg-muted/60 p-4 text-sm leading-relaxed">{aiOut?.text}</div>
         <div className="mt-4 flex gap-2">
           <button onClick={() => { navigator.clipboard.writeText(aiOut?.text ?? ""); toast.success("Copied"); }} className="btn btn-outline flex-1"><Copy className="size-4" /> Copy</button>
           {aiOut?.mode === "whatsapp" && <a href={`https://wa.me/${q.customer.phone.replace(/\D/g, "")}?text=${encodeURIComponent(aiOut.text)}`} target="_blank" rel="noreferrer" className="btn flex-1 bg-whatsapp text-primary-foreground"><MessageCircle className="size-4" /> Open WhatsApp</a>}

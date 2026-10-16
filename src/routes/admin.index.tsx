@@ -130,16 +130,17 @@ function Dash() {
         </div>
       </Sheet>
 
-      <Sheet open={!!view} onClose={() => setView(null)} title={view ? `${view.number} · ${view.customer.name}` : ""} side="center">
+      <Sheet wide open={!!view} onClose={() => setView(null)} title={view ? `${view.number} · ${view.customer.name}` : ""} side="center">
         {view && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between"><StatusBadge status={view.status} /><span className="text-xs text-muted-foreground">{view.customer.projectType}</span></div>
-            <p className="text-sm text-muted-foreground">{view.customer.phone} · {view.customer.address}</p>
-            <div className="rounded-2xl bg-muted/50 p-3 text-sm">
-              {view.areas.map((a) => <div key={a.id} className="flex justify-between py-1"><span>{a.name}</span><span className="text-muted-foreground">{a.items.length} items</span></div>)}
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2"><StatusBadge status={view.status} /><span className="text-xs text-muted-foreground">{view.customer.projectType} · {view.customer.phone} · {view.customer.address}</span></div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {view.areas.map((a) => <div key={a.id} className="rounded-xl bg-muted/50 px-3 py-2 text-sm"><p className="truncate font-medium">{a.name}</p><p className="text-xs text-muted-foreground">{a.items.length} items</p></div>)}
             </div>
-            <div className="flex justify-between text-sm"><span>Grand total</span><b>{inr(totals(view, db).grand)}</b></div>
-            <Link to="/admin/quotations/$id" params={{ id: view.id }} className="btn btn-primary w-full">Open quotation <ArrowRight className="size-4" /></Link>
+            <div className="flex items-center justify-between gap-4 border-t pt-3">
+              <div className="text-sm"><span className="text-muted-foreground">Grand total </span><b className="serif text-lg">{inr(totals(view, db).grand)}</b></div>
+              <Link to="/admin/quotations/$id" params={{ id: view.id }} className="btn btn-primary">Open quotation <ArrowRight className="size-4" /></Link>
+            </div>
           </div>
         )}
       </Sheet>

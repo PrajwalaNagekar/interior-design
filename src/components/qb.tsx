@@ -63,7 +63,7 @@ export function Field({ label, children, locked, className }: { label: string; c
   );
 }
 
-export function Sheet({ open, onClose, title, children, side = "bottom" }: { open: boolean; onClose: () => void; title: string; children: ReactNode; side?: "bottom" | "center" }) {
+export function Sheet({ open, onClose, title, children, side = "bottom", wide }: { open: boolean; onClose: () => void; title: string; children: ReactNode; side?: "bottom" | "center"; wide?: boolean }) {
   useEffect(() => {
     if (!open) return;
     const k = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -76,7 +76,7 @@ export function Sheet({ open, onClose, title, children, side = "bottom" }: { ope
       <div className="absolute inset-0 bg-foreground/40 backdrop-blur-sm" />
       <div
         onClick={(e) => e.stopPropagation()}
-        className={cn("relative w-full max-w-lg bg-card p-6 shadow-lux animate-in slide-in-from-bottom-8 duration-300 max-h-[90vh] overflow-y-auto",
+        className={cn("relative w-full bg-card p-6 shadow-lux animate-in slide-in-from-bottom-8 duration-300 max-h-[90vh] overflow-y-auto", wide ? "max-w-2xl" : "max-w-lg",
           side === "bottom" ? "rounded-t-[28px] sm:rounded-[28px]" : "rounded-[28px] m-4")}
       >
         <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-border sm:hidden" />
