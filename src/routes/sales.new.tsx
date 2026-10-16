@@ -115,8 +115,8 @@ function Wizard() {
       <div className="fixed bottom-[84px] left-1/2 z-20 w-full max-w-[430px] -translate-x-1/2 px-4">
         <div className="card-lux flex items-center gap-3 p-3 pl-5 shadow-lux">
           <div className="flex-1">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Total incl. GST</p>
-            <p className="serif text-xl leading-tight">{inr(t.grand)}</p>
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Pricing by Back Office</p>
+            <p className="serif text-xl leading-tight">{q.areas.length} rooms · {q.areas.reduce((s, a) => s + a.items.length, 0)} items</p>
           </div>
           {step < 3 ? (
             <button disabled={!canNext} onClick={() => setStep(step + 1)} className="btn btn-primary">Next <ArrowRight className="size-4" /></button>
@@ -172,7 +172,7 @@ function ItemsStep({ q, setAreas }: { q: Quotation; setAreas: (fn: (a: Area[]) =
         <section key={a.id}>
           <div className="flex items-baseline justify-between">
             <h2 className="text-lg">{a.name}</h2>
-            <span className="text-sm font-semibold">{inr(t.areaTotals[ai])}</span>
+            <span className="text-xs text-muted-foreground">{a.items.length} items</span>
           </div>
           <div className="mt-3 space-y-2">
             {a.items.map((qi) => {
@@ -187,8 +187,7 @@ function ItemsStep({ q, setAreas }: { q: Quotation; setAreas: (fn: (a: Area[]) =
                       <p className="truncate text-sm font-semibold">{item.name}</p>
                       <p className="text-xs text-muted-foreground">{measureOf(qi, item)} {measureLabel(item.measure)} × {qi.qty}</p>
                     </div>
-                    <span className="text-sm font-semibold">{inr(lineAmount(qi, item, q.marginPct))}</span>
-                    <ChevronDown className={cn("size-4 transition", isOpen && "rotate-180")} />
+                                        <ChevronDown className={cn("size-4 transition", isOpen && "rotate-180")} />
                   </button>
                   {isOpen && (
                     <div className="space-y-3 border-t bg-muted/40 p-4">
@@ -227,9 +226,6 @@ function ItemsStep({ q, setAreas }: { q: Quotation; setAreas: (fn: (a: Area[]) =
                         </div>
                       </div>
                       <Field label="Notes"><input className="input-lux" value={qi.notes} onChange={(e) => updateLine(a.id, { ...qi, notes: e.target.value })} /></Field>
-                      <div className="rounded-xl bg-card p-3 text-xs text-muted-foreground">
-                        Material ₹{qi.materialRate}/{measureLabel(item.measure)} + Labour ₹{qi.labourRate} + Hardware ₹{qi.hardwareCost} · from Vendor Cost Master
-                      </div>
                       <button onClick={() => setAreas((all) => all.map((x) => (x.id === a.id ? { ...x, items: x.items.filter((y) => y.id !== qi.id) } : x)))} className="text-xs font-semibold text-destructive">Remove item</button>
                     </div>
                   )}
@@ -271,20 +267,15 @@ function Review({ q }: { q: Quotation }) {
       </div>
       {q.areas.map((a, i) => (
         <div key={a.id} className="card-lux p-4">
-          <div className="flex justify-between"><p className="font-semibold">{a.name}</p><p className="font-semibold">{inr(t.areaTotals[i])}</p></div>
+          <div className="flex justify-between"><p className="font-semibold">{a.name}</p><p className="text-xs text-muted-foreground">{a.items.length} items</p></div>
           <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
             {a.items.map((qi) => { const it = db.items.find((x) => x.id === qi.itemId)!; return (
-              <li key={qi.id} className="flex justify-between"><span>{it.name} · {measureOf(qi, it)} {measureLabel(it.measure)}</span><span>{inr(lineAmount(qi, it, q.marginPct))}</span></li>
+              <li key={qi.id} className="flex justify-between"><span>{it.name} · {measureOf(qi, it)} {measureLabel(it.measure)}</span><span>× {qi.qty}</span></li>
             ); })}
           </ul>
         </div>
       ))}
-      <div className="card-lux space-y-2 p-4 text-sm">
-        <div className="flex justify-between"><span>Subtotal</span><span>{inr(t.subtotal)}</span></div>
-        <div className="flex justify-between"><span>GST 18%</span><span>{inr(t.gst)}</span></div>
-        <div className="flex justify-between border-t pt-2 serif text-xl"><span>Grand total</span><span>{inr(t.grand)}</span></div>
-      </div>
-      <p className="flex items-center gap-2 text-xs text-muted-foreground"><Check className="size-4 text-success" /> Back Office will review rates before it reaches the customer.</p>
+      <p className="flex items-center gap-2 text-xs text-muted-foreground"><Check className="size-4 text-success" /> Back Office will add all pricing and send it to the customer.</p>
     </div>
   );
 }

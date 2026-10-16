@@ -7,9 +7,9 @@ import bedroom from "@/assets/bedroom.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Quotation Builder Suite" },
+      { title: "Interior Design Suite" },
       { name: "description", content: "Sales mobile, Customer mobile and Back Office dashboard for bespoke interior quotations." },
-      { property: "og:title", content: "Quotation Builder Suite" },
+      { property: "og:title", content: "Interior Design Suite" },
       { property: "og:description", content: "One suite for Sales, Customers and Back Office." },
     ],
   }),
@@ -25,7 +25,7 @@ const CARDS = [
 function Suite() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-6 py-10 page-enter">
-      <p className="label-lux text-gold">Quotation Builder</p>
+      <p className="label-lux text-gold">Interior Design</p>
       <h1 className="mt-2 text-center text-4xl md:text-5xl">The Suite</h1>
       <p className="mt-2 text-center text-muted-foreground">Choose an experience.</p>
       <div className="mt-8 grid w-full max-w-5xl gap-5 md:grid-cols-3">

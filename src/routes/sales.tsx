@@ -9,7 +9,7 @@ export const Route = createFileRoute("/sales")({
     const s = getSession();
     if (!s || s.role !== "sales") throw redirect({ to: "/app" });
   },
-  head: () => ({ meta: [{ title: "Sales — Quotation Builder" }, { name: "description", content: "Sales mobile app for creating interior quotations." }, { property: "og:title", content: "Sales app" }, { property: "og:description", content: "Create and track quotations." }] }),
+  head: () => ({ meta: [{ title: "Sales — Interior Design" }, { name: "description", content: "Sales mobile app for creating interior quotations." }, { property: "og:title", content: "Sales app" }, { property: "og:description", content: "Create and track quotations." }] }),
   component: SalesLayout,
 });
 

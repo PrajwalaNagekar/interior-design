@@ -10,7 +10,7 @@ export const Route = createFileRoute("/admin")({
     const s = getSession();
     if (!s || s.role !== "backoffice") throw redirect({ to: "/backoffice" });
   },
-  head: () => ({ meta: [{ title: "Back Office — Quotation Builder" }, { name: "description", content: "Review, price and approve quotations." }, { property: "og:title", content: "Back Office" }, { property: "og:description", content: "Quotation approvals and cost master." }] }),
+  head: () => ({ meta: [{ title: "Back Office — Interior Design" }, { name: "description", content: "Review, price and approve quotations." }, { property: "og:title", content: "Back Office" }, { property: "og:description", content: "Quotation approvals and cost master." }] }),
   component: AdminLayout,
 });
 
@@ -36,7 +36,7 @@ function AdminLayout() {
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-6">
           <Link to="/admin" className="flex shrink-0 items-center gap-2.5">
             <span className="grid size-9 place-items-center rounded-xl btn-primary serif text-lg">Q</span>
-            <span className="leading-tight"><span className="serif block text-lg">Quotation Builder</span><span className="block text-[10px] uppercase tracking-[0.2em] text-gold">Back Office</span></span>
+            <span className="leading-tight"><span className="serif block text-lg">Interior Design</span><span className="block text-[10px] uppercase tracking-[0.2em] text-gold">Back Office</span></span>
           </Link>
           <div className="flex-1" />
           <Link to="/admin/approvals" className="relative grid size-10 place-items-center rounded-full hover:bg-charcoal-foreground/10" aria-label="Pending approvals">

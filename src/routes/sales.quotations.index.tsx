@@ -40,7 +40,7 @@ function List() {
           <Link key={x.id} to="/sales/quotations/$id" params={{ id: x.id }} className="card-lux block p-4 transition active:scale-[.99]">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0"><p className="truncate font-semibold">{x.customer.name}</p><p className="text-xs text-muted-foreground">{x.number} · {fmtDate(x.createdAt)}</p></div>
-              <p className="serif text-lg">{inr(totals(x, db).grand)}</p>
+              <p className="serif text-lg">{["draft","pending","returned"].includes(x.status) ? "Awaiting pricing" : inr(totals(x, db).grand)}</p>
             </div>
             <div className="mt-3 flex items-center justify-between"><StatusBadge status={x.status} /><span className="text-xs text-muted-foreground">{x.areas.length} areas</span></div>
           </Link>

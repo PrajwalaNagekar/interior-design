@@ -6,7 +6,7 @@ import kitchen from "@/assets/kitchen.jpg";
 
 export const Route = createFileRoute("/customer")({
   ssr: false,
-  head: () => ({ meta: [{ title: "Customer — Quotation Builder" }, { name: "description", content: "View and respond to your interior quotation." }, { property: "og:title", content: "Your quotation" }, { property: "og:description", content: "Approve, reject or discuss your proposal." }] }),
+  head: () => ({ meta: [{ title: "Customer — Interior Design" }, { name: "description", content: "View and respond to your interior quotation." }, { property: "og:title", content: "Your quotation" }, { property: "og:description", content: "Approve, reject or discuss your proposal." }] }),
   component: () => <PhoneFrame label="Customer"><CustomerStart /></PhoneFrame>,
 });
 

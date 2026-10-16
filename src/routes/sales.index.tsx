@@ -65,7 +65,7 @@ function SalesHome() {
           {recent.map((q) => (
             <Link key={q.id} to="/sales/quotations/$id" params={{ id: q.id }} className="card-lux overflow-hidden">
               <img src={areaImage(q.areas[0]?.name ?? "")} alt="" className="h-24 w-full object-cover" loading="lazy" />
-              <div className="p-3"><p className="truncate text-sm font-semibold">{q.customer.name}</p><p className="serif text-lg">{inr(totals(q, db).grand)}</p></div>
+              <div className="p-3"><p className="truncate text-sm font-semibold">{q.customer.name}</p><p className="serif text-lg">{["draft","pending","returned"].includes(q.status) ? "Awaiting pricing" : inr(totals(q, db).grand)}</p></div>
             </Link>
           ))}
         </div>

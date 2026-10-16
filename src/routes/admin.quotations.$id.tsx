@@ -23,6 +23,7 @@ function Review() {
   const [back, setBack] = useState(false);
   const [comment, setComment] = useState("");
   const [wa, setWa] = useState(false);
+  const [confirmA, setConfirmA] = useState(false);
 
   const changes = useMemo<ChangeEntry[]>(() => {
     if (!q || !orig) return [];
@@ -163,7 +164,7 @@ function Review() {
             <Field label="Back Office notes" className="mt-4"><textarea disabled={!reviewable} rows={3} className={cn("input-lux", changed(q.boNotes, orig.boNotes))} value={q.boNotes} onChange={(e) => setQ({ ...q, boNotes: e.target.value })} /></Field>
             {reviewable ? (
               <div className="mt-5 space-y-2">
-                <button onClick={approve} className="btn btn-primary w-full py-3.5"><Check className="size-4" /> {dirty ? "Approve with Changes" : "Approve"}</button>
+                <button onClick={() => setConfirmA(true)} className="btn btn-primary w-full py-3.5"><Check className="size-4" /> {dirty ? "Approve with Changes" : "Approve"}</button>
                 <button onClick={() => setBack(true)} className="btn btn-outline w-full"><Undo2 className="size-4" /> Send back to Sales</button>
                 {dirty && <button onClick={() => setQ(structuredClone(orig))} className="btn btn-ghost w-full text-xs">Discard changes</button>}
               </div>
@@ -204,6 +205,13 @@ function Review() {
       <Sheet open={back} onClose={() => setBack(false)} title="Send back to Sales" side="center">
         <textarea className="input-lux" rows={4} placeholder="What should Sales revise?" value={comment} onChange={(e) => setComment(e.target.value)} />
         <button onClick={sendBack} className="btn btn-dark mt-4 w-full">Send back</button>
+      </Sheet>
+      <Sheet open={confirmA} onClose={() => setConfirmA(false)} title={dirty ? "Approve with changes?" : "Approve quotation?"} side="center">
+        <p className="text-sm text-muted-foreground">Grand total <b className="text-foreground">{inr(totals(q, db).grand)}</b>. After approval you can send it to {q.customer.name} on WhatsApp.</p>
+        <div className="mt-5 grid grid-cols-2 gap-2">
+          <button className="btn btn-outline" onClick={() => setConfirmA(false)}>Cancel</button>
+          <button className="btn btn-primary" onClick={() => { setConfirmA(false); approve(); }}><Check className="size-4" /> Approve</button>
+        </div>
       </Sheet>
     </>
   );

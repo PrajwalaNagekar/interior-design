@@ -9,4 +9,4 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Quotation Builder prototype keeps all data in a browser-local store (src/lib/store.ts, localStorage + cross-tab sync) with seeded demo data; app routes use `ssr: false`. Why: frontend-only prototype deployable as a static web app; swap for a real backend when going to production.
+- Interior Design prototype keeps all data in a browser-local store (src/lib/store.ts, localStorage + cross-tab sync) with seeded demo data; app routes use `ssr: false`. Why: frontend-only prototype deployable as a static web app; swap for a real backend when going to production.

@@ -19,7 +19,8 @@ function Detail() {
   if (!q) return <p className="p-8">Quotation not found.</p>;
   const t = totals(q, db);
   const editable = q.status === "draft" || q.status === "returned";
-  const canSend = q.status === "approved" || q.status === "approved_changes";
+  const canSend = false;
+  const priced = !["draft", "pending", "returned"].includes(q.status);
   const shared = ["sent", "cust_approved", "cust_rejected", "cust_discuss"].includes(q.status);
   const returnedNote = [...q.history].reverse().find((h) => h.status === "returned")?.comment;
 
@@ -58,7 +59,7 @@ function Detail() {
           </div>
         )}
 
-        <div className="card-lux p-5">
+        {priced ? <div className="card-lux p-5">
           <p className="label-lux">Grand total incl. GST</p>
           <p className="serif mt-1 text-4xl">{inr(t.grand)}</p>
           <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
@@ -66,16 +67,16 @@ function Detail() {
             <div><p className="text-muted-foreground">Discount</p><p className={cn("font-semibold", q.discountPct > 0 && "text-gold")}>{inr(t.discount)}</p></div>
             <div><p className="text-muted-foreground">GST</p><p className="font-semibold">{inr(t.gst)}</p></div>
           </div>
-        </div>
+        </div> : <div className="card-lux gold-gradient p-5"><p className="label-lux">Pricing</p><p className="mt-1 text-sm">Back Office is preparing the pricing. You'll see it here once it's sent to the customer.</p></div>}
 
         {q.areas.map((a, i) => (
           <div key={a.id} className="card-lux p-4">
-            <div className="flex justify-between"><p className="font-semibold">{a.name}</p><p className="font-semibold">{inr(t.areaTotals[i])}</p></div>
+            <div className="flex justify-between"><p className="font-semibold">{a.name}</p>{priced && <p className="font-semibold">{inr(t.areaTotals[i])}</p>}</div>
             <ul className="mt-2 space-y-1.5 text-sm">
               {a.items.map((qi) => { const it = db.items.find((x) => x.id === qi.itemId)!; const ed = (qi.edited?.length ?? 0) > 0; return (
                 <li key={qi.id} className={cn("flex justify-between rounded-lg px-2 py-1 -mx-2", ed && "bg-gold-soft")}>
                   <span className="text-muted-foreground">{it.name} · {measureOf(qi, it)} {measureLabel(it.measure)}{ed && <b className="ml-1 text-[10px] text-gold">EDITED</b>}</span>
-                  <span>{inr(lineAmount(qi, it, q.marginPct))}</span>
+                  <span>{priced ? inr(lineAmount(qi, it, q.marginPct)) : `× ${qi.qty}`}</span>
                 </li>
               ); })}
             </ul>

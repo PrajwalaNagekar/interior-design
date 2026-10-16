@@ -6,7 +6,7 @@ import living from "@/assets/living.jpg";
 
 export const Route = createFileRoute("/backoffice")({
   ssr: false,
-  head: () => ({ meta: [{ title: "Back Office sign in — Quotation Builder" }, { name: "description", content: "Sign in to the Back Office dashboard." }, { property: "og:title", content: "Back Office" }, { property: "og:description", content: "Review and price quotations." }] }),
+  head: () => ({ meta: [{ title: "Back Office sign in — Interior Design" }, { name: "description", content: "Sign in to the Back Office dashboard." }, { property: "og:title", content: "Back Office" }, { property: "og:description", content: "Review and price quotations." }] }),
   component: BOLogin,
 });
 

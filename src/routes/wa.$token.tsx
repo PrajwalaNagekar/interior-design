@@ -7,7 +7,7 @@ import { COMPANY, customerUrl, IMAGES } from "@/components/qb";
 
 export const Route = createFileRoute("/wa/$token")({
   ssr: false,
-  head: () => ({ meta: [{ title: "WhatsApp preview — Quotation Builder" }, { name: "description", content: "Simulated WhatsApp message with a quotation link." }, { property: "og:title", content: "WhatsApp preview" }, { property: "og:description", content: "Simulated customer message." }] }),
+  head: () => ({ meta: [{ title: "WhatsApp preview — Interior Design" }, { name: "description", content: "Simulated WhatsApp message with a quotation link." }, { property: "og:title", content: "WhatsApp preview" }, { property: "og:description", content: "Simulated customer message." }] }),
   component: () => <PhoneFrame label="Customer · WhatsApp"><WA /></PhoneFrame>,
 });
 
